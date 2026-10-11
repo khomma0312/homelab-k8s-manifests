@@ -16,7 +16,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests'
+        repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
         targetRevision: HEAD
         path: '{{app.path}}'
       destination:
