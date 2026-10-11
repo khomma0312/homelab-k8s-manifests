@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: root-applicationset
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
+      revision: HEAD
+      files:
+      - path: 'argocd/config/*.yaml'
+  template:
+    metadata:
+      name: '{{app.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests'
+        targetRevision: HEAD
+        path: '{{app.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{app.namespace}}'
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+        automated:
+          prune: true
+          selfHeal: true
