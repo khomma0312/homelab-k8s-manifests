@@ -2,6 +2,6 @@ infra:
   name: kube-prometheus-stack
   chartRepoURL: ghcr.io/prometheus-community/charts
   chartName: kube-prometheus-stack
-  chartVersion: v92.11.0
+  chartVersion: 92.11.0
   namespace: monitoring
   crdsEnabled: "true"
