@@ -22,9 +22,6 @@ spec:
           chart: '{{infra.chartName}}'
           targetRevision: '{{infra.chartVersion}}'
           helm:
-            parameters:
-              - name: crds.enabled
-                value: '{{infra.crdsEnabled}}'
             # 2. で取得する自前リポジトリ内の values.yaml を読み込ませる設定
             valueFiles:
               - $values/infra/{{infra.name}}/values.yaml
@@ -38,6 +35,7 @@ spec:
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
+          - ServerSideApply=true
         automated:
           prune: true
           selfHeal: true
