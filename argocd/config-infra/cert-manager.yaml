@@ -2,6 +2,6 @@ infra:
   name: cert-manager
   chartRepoURL: quay.io/jetstack/charts
   chartName: cert-manager
-  chartVersion: v1.21.1
+  chartVersion: v1.21.2
   namespace: cert-manager
   crdsEnabled: "true"
