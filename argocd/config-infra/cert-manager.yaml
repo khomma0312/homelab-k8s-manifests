@@ -1,6 +1,6 @@
 infra:
   name: cert-manager
-  chartRepoURL: oci://quay.io/jetstack/charts
+  chartRepoURL: quay.io/jetstack/charts
   chartName: cert-manager
   chartVersion: v1.21.2
   namespace: cert-manager
