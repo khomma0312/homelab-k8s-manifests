@@ -4,4 +4,3 @@ infra:
   chartName: kube-prometheus-stack
   chartVersion: 92.11.0
   namespace: monitoring
-  crdsEnabled: "true"

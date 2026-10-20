@@ -1,3 +1,5 @@
+crds:
+  enabled: true
 # ---- Prometheus ----
 prometheus:
   prometheusSpec:
