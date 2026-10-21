@@ -1,0 +1,6 @@
+infra:
+  name: envoy-gateway
+  chartRepoURL: docker.io/envoyproxy
+  chartName: gateway-helm
+  chartVersion: 1.9.2
+  namespace: envoy-gateway-system
