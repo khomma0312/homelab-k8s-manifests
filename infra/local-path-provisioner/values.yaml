@@ -1,0 +1,11 @@
+resources:
+  requests: { cpu: 10m, memory: 32Mi }
+  limits: { memory: 64Mi }
+
+configmap:
+  helperPod:
+    # ミニPC(control-planeのTaint付き)上でPVを作るために必要
+    tolerations:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
