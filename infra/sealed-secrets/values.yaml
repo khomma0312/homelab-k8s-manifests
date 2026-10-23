@@ -1,0 +1,15 @@
+# kubesealのデフォルトのコントローラー名に合わせる
+fullnameOverride: sealed-secrets-controller
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+# kube-prometheus-stackでモニタリングするためのServiceMonitorを有効化
+metrics:
+  serviceMonitor:
+    enabled: true
