@@ -1,0 +1,7 @@
+infra:
+  name: external-dns
+  chartRepoURL: https://kubernetes-sigs.github.io/external-dns
+  chartName: external-dns
+  chartVersion: 1.22.0
+  namespace: external-dns
+  secrets: true
