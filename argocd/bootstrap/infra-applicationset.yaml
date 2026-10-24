@@ -4,6 +4,7 @@ metadata:
   name: infra-applicationset
   namespace: argocd
 spec:
+  goTemplate: true
   generators:
   - git:
       repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
@@ -12,30 +13,34 @@ spec:
       - path: 'argocd/config-infra/*.yaml'
   template:
     metadata:
-      name: 'infra-{{infra.name}}'
+      name: 'infra-{{ .infra.name }}'
     spec:
       project: default
-      # Multi-Source 機能：sources と複数形にすることで、Helm チャートと自前の値を分離
-      sources:
-        # 1. 公式（または外部）の Helm チャートを取得する定義
-        - repoURL: '{{infra.chartRepoURL}}'
-          chart: '{{infra.chartName}}'
-          targetRevision: '{{infra.chartVersion}}'
-          helm:
-            # 2. で取得する自前リポジトリ内の values.yaml を読み込ませる設定
-            valueFiles:
-              - $values/infra/{{infra.name}}/values.yaml
-        # 2. 自前の Git リポジトリ（values.yaml の格納先）を指定する定義
-        - repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
-          targetRevision: HEAD
-          ref: values # 上述の「$values」というエイリアス（変数）として定義
       destination:
         server: 'https://kubernetes.default.svc'
-        namespace: '{{infra.namespace}}'
+        namespace: '{{ .infra.namespace }}'
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
           - ServerSideApply=true
+          - SkipDryRunOnMissingResource=true
         automated:
           prune: true
           selfHeal: true
+  templatePatch: |
+    spec:
+      sources:
+        - repoURL: '{{ .infra.chartRepoURL }}'
+          chart: '{{ .infra.chartName }}'
+          targetRevision: '{{ .infra.chartVersion }}'
+          helm:
+            valueFiles:
+              - $values/infra/{{ .infra.name }}/values.yaml
+        - repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
+          targetRevision: HEAD
+          ref: values
+        {{- if .infra.secrets }}
+        - repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
+          targetRevision: HEAD
+          path: 'infra/{{ .infra.name }}/secrets'
+        {{- end }}
