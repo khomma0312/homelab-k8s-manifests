@@ -1,0 +1,52 @@
+# ref: https://github.com/kubernetes-sigs/external-dns/blob/master/charts/external-dns/values.yaml
+provider:
+  name: rfc2136
+
+extraArgs:
+  - --rfc2136-host=192.168.0.110
+  - --rfc2136-port=53
+  - --rfc2136-zone=home.arpa
+  - --rfc2136-zone=0.168.192.in-addr.arpa
+  - --rfc2136-tsig-keyname=external-dns
+  - --rfc2136-tsig-secret=<secret>
+  - --rfc2136-tsig-secret-alg=hmac-sha256
+  - --rfc2136-axfr
+  - --create-ptr
+  - --managed-record-types=A
+  - --managed-record-types=AAAA
+  - --managed-record-types=CNAME
+  - --managed-record-types=PTR
+
+env:
+  - name: EXTERNAL_DNS_RFC2136_TSIG_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: external-dns-rfc2136-tsig
+        key: tsig-secret
+
+txtOwnerId: external-dns
+
+domainFilters:
+  - home.arpa
+  - 0.168.192.in-addr.arpa
+
+sources:
+  - service
+  - ingress
+  - crd
+  - gateway-httproute
+
+policy: sync
+logLevel: debug
+interval: 10s
+
+rbac:
+  create: true
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
