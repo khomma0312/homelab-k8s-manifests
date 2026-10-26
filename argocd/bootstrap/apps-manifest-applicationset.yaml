@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: apps-applicationset
+  name: apps-manifest-applicationset
   namespace: argocd
 spec:
   generators:
@@ -9,7 +9,7 @@ spec:
       repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
       revision: HEAD
       files:
-      - path: 'argocd/config/*.yaml'
+      - path: 'argocd/config/apps-manifest/*.yaml'
   template:
     metadata:
       name: '{{app.name}}'
@@ -25,6 +25,8 @@ spec:
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
+          - ServerSideApply=true
+          - SkipDryRunOnMissingResource=true
         automated:
           prune: true
           selfHeal: true

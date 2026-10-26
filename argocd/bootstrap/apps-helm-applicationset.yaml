@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps-helm-applicationset
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+  - git:
+      repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
+      revision: HEAD
+      files:
+      - path: 'argocd/config/apps-helm/*.yaml'
+  template:
+    metadata:
+      name: 'apps-{{ .app.name }}'
+    spec:
+      project: default
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{ .app.namespace }}'
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+          - SkipDryRunOnMissingResource=true
+        automated:
+          prune: true
+          selfHeal: true
+  templatePatch: |
+    spec:
+      sources:
+        - repoURL: '{{ .app.chartRepoURL }}'
+          chart: '{{ .app.chartName }}'
+          targetRevision: '{{ .app.chartVersion }}'
+          helm:
+            valueFiles:
+              - $values/apps/{{ .app.name }}/values.yaml
+        - repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
+          targetRevision: HEAD
+          ref: values
+        {{- if .app.secrets }}
+        - repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
+          targetRevision: HEAD
+          path: 'apps/{{ .app.name }}/secrets'
+        {{- end }}
