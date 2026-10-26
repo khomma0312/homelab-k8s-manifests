@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: infra-manifest-applicationset
+  namespace: argocd
+spec:
+  goTemplate: true
+  generators:
+  - git:
+      repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
+      revision: HEAD
+      files:
+      - path: 'argocd/config/infra-manifest/*.yaml'
+  template:
+    metadata:
+      name: 'infra-{{infra.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/khomma0312/homelab-k8s-manifests.git'
+        targetRevision: HEAD
+        path: '{{infra.path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{infra.namespace}}'
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+          - SkipDryRunOnMissingResource=true
+        automated:
+          prune: true
+          selfHeal: true
